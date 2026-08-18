@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: kafka-basic
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:kafka_training}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      # comodo per il training: crea/aggiorna automaticamente le tabelle dalle entity
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  batch:
+    # i job vengono lanciati solo dallo scheduler o dagli endpoint REST, mai automaticamente all'avvio
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: training-consumer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+
+server:
+  port: ${SERVER_PORT:8080}
+
+training:
+  kafka:
+    topic-1: training-topic-1
+    topic-2: training-topic-2
+    partitions: 3
+  schedule:
+    # ogni 5 minuti; formato cron di Spring (secondi minuti ore giorno mese giorno-settimana)
+    cron: "0 */5 * * * *"
+  producer:
+    messages-per-run: 5

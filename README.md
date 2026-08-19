@@ -37,6 +37,12 @@ Tabelle MySQL create automaticamente (`ddl-auto=update`): `staging_message_1`, `
 - Docker Desktop (per Kafka — il progetto include il Maven Wrapper, non serve installare Maven)
 - Un'istanza MySQL locale già in esecuzione (l'app crea automaticamente lo schema/le tabelle, ma non il database server)
 
+> **Windows + WSL**: se Docker e/o MySQL sono installati solo dentro WSL (non Docker Desktop con
+> integrazione visibile dal terminale Windows/PowerShell/Git Bash che stai usando), i comandi
+> `docker`/`mysql` lanciati direttamente da Windows falliscono con "command not found" anche se
+> funzionano perfettamente dentro la distro. In quel caso lanciali con
+> `wsl.exe -- bash -lc "<comando>"`, oppure apri direttamente un terminale WSL.
+
 ## 1. Avviare Kafka
 
 ```bash

@@ -30,6 +30,16 @@ this project.
   containerized) — connection is via `DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USER`/`DB_PASSWORD` env vars, defaulting to
   `localhost:3306/kafka_training` with `root`/`root`. Schema is created automatically
   (`spring.jpa.hibernate.ddl-auto=update`, `createDatabaseIfNotExist=true`).
+- The `root`/`root` default is just a placeholder — never overwrite it with a real password directly in
+  `application.yml`, since that file is committed to git. If the local MySQL root password differs (common — it's
+  whatever was set when MySQL was installed, not project-controlled), export `DB_PASSWORD` as a shell env var
+  instead, e.g. `export DB_PASSWORD=...` (or PowerShell `$env:DB_PASSWORD = "..."`) before `spring-boot:run`.
+- On a Windows dev machine where Docker/MySQL only exist inside a WSL distro (not Docker Desktop with Windows-visible
+  integration), `docker`/`mysql` invoked directly from a Windows shell (PowerShell, Git Bash) fail with
+  "command not found" even though they work fine inside WSL. Prefix such commands with `wsl.exe -- bash -lc
+  "<command>"` in that case — confirmed working this way (`docker compose up -d`, `./mvnw spring-boot:run`, and all
+  three job endpoints tested successfully end-to-end from a WSL shell against a Windows-side checkout of this repo
+  mounted at `/mnt/d/...`).
 - `spring.batch.job.enabled=false` — jobs never auto-run on startup. They only run via the `@Scheduled` cron
   (`training.schedule.cron`, default every 5 minutes) or via the manual-trigger REST endpoints
   (`POST /api/jobs/{producer1|producer2|consumer}`, see [README.md](README.md)).
